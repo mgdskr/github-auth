@@ -1,0 +1,23 @@
+language: node_js
+node_js:
+  - 6
+os: linux
+install:
+  - yarn install
+script:
+  - yarn test
+  - yarn build
+cache:
+  directories:
+    - node_modules
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  local_dir: build
+  on:
+    branch: master
+notifications:
+  email:
+    on_sucess: never
+    on_failure: always
