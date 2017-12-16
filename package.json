@@ -10,7 +10,7 @@
   },
   "lint-staged": {
     "src/**/*.{js, jsx, json, css}": [
-      "prettier --write -single-quote", "git add"
+      "prettier --write --single-quote", "eslint", "git add"
     ]
 
   },
