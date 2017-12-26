@@ -1,0 +1,9 @@
+header {
+  background-color: #24292e;
+  width: 100%;
+}
+
+h1 {
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 0;
+}
