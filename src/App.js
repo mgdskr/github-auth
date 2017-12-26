@@ -5,28 +5,39 @@ import OAuth from './components/OAuth';
 import Home from './components/Home';
 import API from './services/github-api';
 
+const pathname = process.env.MODE === 'prod' ? '/github-auth' : '';
+
 class App extends Component {
   render() {
     return (
       <Router>
         <Fragment>
-          <Route path="/github-auth/login" component={Login} />
-          <Route path="/github-auth/oauth" component={OAuth} />
-          <PrivateRoute exact path="/github-auth/" component={Home} />
+          <RouteWithPath path="/login" component={Login} />
+          <RouteWithPath path="/oauth" component={OAuth} />
+          <PrivateRoute exact path="/" component={Home} />
         </Fragment>
       </Router>
     );
   }
 }
 
-const PrivateRoute = ({ component: Component, ...rest }) => (
+const RouteWithPath = ({ component: Component, path, ...rest }) => (
   <Route
     {...rest}
+    path={`${pathname}${path}`}
+    render={props => <Component {...props} />}
+  />
+);
+
+const PrivateRoute = ({ component: Component, path, ...rest }) => (
+  <Route
+    {...rest}
+    path={`${pathname}${path}`}
     render={props =>
       API.hasToken() ? (
         <Component {...props} />
       ) : (
-        <Redirect to="/github-auth/login" />
+        <Redirect to={`${pathname}/login`} />
       )
     }
   />
