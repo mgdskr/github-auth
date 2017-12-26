@@ -5,7 +5,7 @@ import OAuth from './components/OAuth';
 import Home from './components/Home';
 import API from './services/github-api';
 
-const pathname = process.env.MODE === 'prod' ? '/github-auth' : '';
+const pathname = process.env.PUBLIC_URL || '';
 
 class App extends Component {
   render() {
