@@ -10,9 +10,9 @@ class App extends Component {
     return (
       <Router>
         <Fragment>
-          <Route path="/login" component={Login} />
-          <Route path="/oauth" component={OAuth} />
-          <PrivateRoute exact path="/" component={Home} />
+          <Route path="/github-auth/login" component={Login} />
+          <Route path="/github-auth/oauth" component={OAuth} />
+          <PrivateRoute exact path="/github-auth/" component={Home} />
         </Fragment>
       </Router>
     );
@@ -23,7 +23,11 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route
     {...rest}
     render={props =>
-      API.hasToken() ? <Component {...props} /> : <Redirect to="/login" />
+      API.hasToken() ? (
+        <Component {...props} />
+      ) : (
+        <Redirect to="/github-auth/login" />
+      )
     }
   />
 );
