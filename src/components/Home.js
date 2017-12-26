@@ -28,7 +28,7 @@ class Home extends Component {
           {this.state.repos.length ? (
             <ReposList repos={this.state.repos} />
           ) : (
-            'No repos yet'
+            'No repos yet!!!'
           )}
         </InnerContainer>
       </Fragment>
