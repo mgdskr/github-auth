@@ -14,13 +14,12 @@ class ReposList extends Component {
       type,
       lang
     }) => item => {
-      console.log(hasOpenIssues, item.open_issues_count);
       return (
         (hasOpenIssues ? item.open_issues_count > 0 : true) &&
         (hasTopics ? item.topics.length > 0 : true) &&
         item.stargazers_count >= starredGTXTimes &&
         item.updated_at > updatedAfter &&
-        // (lang === 'Any' ? true : item.language === lang) &&
+        (lang === 'Any' ? true : item.language === lang) &&
         (type === 'fork'
           ? item.fork === true
           : type === 'source' ? item.fork === false : true)

@@ -36,9 +36,9 @@ class Filters extends Component {
   };
 
   render() {
-    // const { filterObj, languages } = this.props;
-    const { filterObj } = this.props;
-    const languages = [];
+    const { filterObj, languages } = this.props;
+    // const { filterObj } = this.props;
+    // const languages = [];
 
     return (
       <div className="filtersContainer">
@@ -129,7 +129,10 @@ class Filters extends Component {
   }
 }
 
-const mapStateToProps = ({ filters }) => ({ filterObj: filters });
+const mapStateToProps = ({ filters, repos }) => ({
+  filterObj: filters,
+  languages: repos.languages
+});
 
 export { Filters };
 export default connect(mapStateToProps)(Filters);
