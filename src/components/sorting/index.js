@@ -49,7 +49,7 @@ class Sorting extends Component {
   }
 }
 
-const mapStateToProps = ({ sorting }) => ({ sortingObj: sorting });
+const mapStateToProps = ({ sorting: sortingObj }) => ({ sortingObj });
 
 export { Sorting };
 export default connect(mapStateToProps)(Sorting);

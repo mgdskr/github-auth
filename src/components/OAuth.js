@@ -13,7 +13,7 @@ class OAuth extends Component {
   }
 }
 
-const mapStateToProps = ({ auth }) => ({ isAuthorized: auth.isAuthorized });
+const mapStateToProps = ({ auth: { isAuthorized } }) => ({ isAuthorized });
 
 export { OAuth };
 export default connect(mapStateToProps)(OAuth);

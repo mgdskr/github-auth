@@ -4,9 +4,18 @@ import ReposList from './repos-list';
 import InnerContainer from './inner-container';
 import Filters from './filters';
 import Sorting from './sorting';
+import { connect } from 'react-redux';
+import { loadMore as loadNextPage } from '../redux/modules/repos';
 
 class Home extends Component {
+  loadMore = () => {
+    loadNextPage(this.props.dispatch)(this.props.query, this.props.nextPage);
+  };
+
   render() {
+    console.log('props', this.props);
+    const { allPagesLoaded } = this.props;
+
     return (
       <Fragment>
         <Header />
@@ -14,10 +23,22 @@ class Home extends Component {
           <Sorting />
           <Filters />
           <ReposList />
+          {!allPagesLoaded ? (
+            <button type="button" onClick={this.loadMore}>
+              Load more
+            </button>
+          ) : null}
         </InnerContainer>
       </Fragment>
     );
   }
 }
 
-export default Home;
+const mapStateToProps = ({ repos: { nextPage, allPagesLoaded, query } }) => ({
+  nextPage,
+  allPagesLoaded,
+  query
+});
+
+export { Home };
+export default connect(mapStateToProps)(Home);

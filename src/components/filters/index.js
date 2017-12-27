@@ -129,9 +129,9 @@ class Filters extends Component {
   }
 }
 
-const mapStateToProps = ({ filters, repos }) => ({
-  filterObj: filters,
-  languages: repos.languages
+const mapStateToProps = ({ filters: filterObj, repos: { languages } }) => ({
+  filterObj,
+  languages
 });
 
 export { Filters };

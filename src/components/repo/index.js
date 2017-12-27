@@ -3,8 +3,6 @@ import style from './style.css';
 import languageColors from '../../libs/language-colors';
 
 const Repo = ({ repo }) => {
-  console.log('repo', repo);
-
   const languageColor = {
     backgroundColor:
       repo.language && languageColors[repo.language]

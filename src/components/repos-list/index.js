@@ -32,10 +32,10 @@ class ReposList extends Component {
   }
 }
 
-const mapStateToProps = ({ repos, filters, sort }) => ({
-  repos: repos.data.repos,
+const mapStateToProps = ({ repos: { repos }, filters, sort: sortingObj }) => ({
+  repos,
   filters,
-  sortingObj: sort
+  sortingObj
 });
 
 export { ReposList };

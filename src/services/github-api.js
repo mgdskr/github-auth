@@ -31,6 +31,18 @@ const API = {
   },
   hasToken() {
     return !!token;
+  },
+  loadPage(query, page) {
+    if (!token) return Promise.resolve([]);
+    const headers = new Headers();
+    headers.set('Accept', 'application/vnd.github.mercy-preview+json');
+
+    console.log(page);
+
+    return fetch(
+      `${HOST_API}/search/repositories?q=${query}&page=${page}&access_token=${token}`,
+      { headers }
+    ).then(response => response.json());
   }
 };
 
