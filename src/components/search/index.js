@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { getRepos } from '../../redux/modules/repos';
 import './style.css';
 
 class Search extends Component {
@@ -7,7 +9,7 @@ class Search extends Component {
     const $input = event.target.querySelector('#searchInput');
     const query = $input.value;
     $input.value = '';
-    this.props.onSearch(query);
+    getRepos(this.props.dispatch)(query);
   };
 
   render() {
@@ -20,4 +22,5 @@ class Search extends Component {
   }
 }
 
-export default Search;
+export { Search };
+export default connect()(Search);

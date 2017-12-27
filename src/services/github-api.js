@@ -21,9 +21,12 @@ const API = {
   },
   searchRepos(query) {
     if (!token) return Promise.resolve([]);
+    const headers = new Headers();
+    headers.set('Accept', 'application/vnd.github.mercy-preview+json');
 
     return fetch(
-      `${HOST_API}/search/repositories?q=${query}&access_token=${token}`
+      `${HOST_API}/search/repositories?q=${query}&access_token=${token}`,
+      { headers }
     ).then(response => response.json());
   },
   hasToken() {

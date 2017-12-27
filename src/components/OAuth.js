@@ -1,25 +1,19 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
-import API from '../services/github-api';
+import { connect } from 'react-redux';
+import { auth } from '../redux/modules/auth';
 
 class OAuth extends Component {
-  constructor() {
-    super();
-    this.state = {
-      access_token: null
-    };
-  }
-
   componentDidMount() {
-    const code = window.location.href.split('=').slice(-1)[0];
-    if (code) {
-      API.getToken(code).then(access_token => this.setState({ access_token }));
-    }
+    auth(this.props.dispatch);
   }
 
   render() {
-    return this.state.access_token ? <Redirect to="/" /> : 'REDIRECTING...';
+    return this.props.isAuthorized ? <Redirect to="/" /> : 'REDIRECTING...';
   }
 }
 
-export default OAuth;
+const mapStateToProps = ({ auth }) => ({ isAuthorized: auth.isAuthorized });
+
+export { OAuth };
+export default connect(mapStateToProps)(OAuth);
