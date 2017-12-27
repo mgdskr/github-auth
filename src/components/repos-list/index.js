@@ -1,30 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Repo from '../repo';
+import { filterFunction, sortingFunction } from '../../libs/utils';
 
 class ReposList extends Component {
   render() {
-    console.log('render');
-
-    const filterFunction = ({
-      hasOpenIssues,
-      hasTopics,
-      starredGTXTimes,
-      updatedAfter,
-      type,
-      lang
-    }) => item => {
-      return (
-        (hasOpenIssues ? item.open_issues_count > 0 : true) &&
-        (hasTopics ? item.topics.length > 0 : true) &&
-        item.stargazers_count >= starredGTXTimes &&
-        item.updated_at > updatedAfter &&
-        (lang === 'Any' ? true : item.language === lang) &&
-        (type === 'fork'
-          ? item.fork === true
-          : type === 'source' ? item.fork === false : true)
-      );
-    };
     const { repos } = this.props;
     const filters = this.props.filters || {
       hasOpenIssues: false,
@@ -34,7 +14,13 @@ class ReposList extends Component {
       type: 'all',
       lang: 'Any'
     };
-    const filteredRepos = repos.filter(filterFunction(filters));
+    const sortingObj = this.props.sortingObj || {
+      sortingField: 'full_name',
+      sortingOrder: 'asc'
+    };
+    const filteredRepos = repos
+      .filter(filterFunction(filters))
+      .sort(sortingFunction(sortingObj));
 
     return (
       <div>
@@ -46,9 +32,10 @@ class ReposList extends Component {
   }
 }
 
-const mapStateToProps = ({ repos, filters }) => ({
+const mapStateToProps = ({ repos, filters, sort }) => ({
   repos: repos.data.repos,
-  filters
+  filters,
+  sortingObj: sort
 });
 
 export { ReposList };

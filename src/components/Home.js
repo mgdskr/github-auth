@@ -3,6 +3,7 @@ import Header from './header';
 import ReposList from './repos-list';
 import InnerContainer from './inner-container';
 import Filters from './filters';
+import Sorting from './sorting';
 
 class Home extends Component {
   render() {
@@ -10,6 +11,7 @@ class Home extends Component {
       <Fragment>
         <Header />
         <InnerContainer>
+          <Sorting />
           <Filters />
           <ReposList />
         </InnerContainer>
