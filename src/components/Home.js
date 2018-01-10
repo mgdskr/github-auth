@@ -4,6 +4,7 @@ import ReposList from './repos-list';
 import InnerContainer from './inner-container';
 import Filters from './filters';
 import Sorting from './sorting';
+import Dialog from './dialog';
 import { connect } from 'react-redux';
 import { loadMore as loadNextPage } from '../redux/modules/repos';
 
@@ -29,6 +30,7 @@ class Home extends Component {
             </button>
           ) : null}
         </InnerContainer>
+        <Dialog />
       </Fragment>
     );
   }

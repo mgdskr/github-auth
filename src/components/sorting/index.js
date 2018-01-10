@@ -4,6 +4,13 @@ import { sort } from '../../redux/modules/sort';
 import { sortingOptions } from './sorting';
 
 class Sorting extends Component {
+  static defaultProps = {
+    sortingObj: {
+      sortingField: 'full_name',
+      sortingOrder: 'asc'
+    }
+  };
+
   handlerOnSort = event => {
     const sortingType = [].find.call(
       event.target.childNodes,
@@ -14,10 +21,7 @@ class Sorting extends Component {
   };
 
   render() {
-    const sortingObj = this.props.sortingObj || {
-      sortingField: 'full_name',
-      sortingOrder: 'asc'
-    };
+    const { sortingObj: { sortingField, sortingOrder } } = this.props;
 
     return (
       <div className="sortingContainer">
@@ -34,9 +38,8 @@ class Sorting extends Component {
                 value={key}
                 key={key}
                 defaultChecked={
-                  sortingOptions[key].sortingField ===
-                    sortingObj.sortingField &&
-                  sortingOptions[key].sortingOrder === sortingObj.sortingOrder
+                  sortingOptions[key].sortingField === sortingField &&
+                  sortingOptions[key].sortingOrder === sortingOrder
                 }
               >
                 {sortingOptions[key].title}

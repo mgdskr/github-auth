@@ -34,11 +34,9 @@ const getReposFailed = error => ({
 const loadMore = dispatch => (query, nextPage) => {
   API.loadPage(query, nextPage)
     .then(({ items: repos, total_count: totalCount }) => {
-      console.log(repos, totalCount);
       dispatch(getReposSuccess(repos, totalCount));
     })
     .catch(error => {
-      console.log(error);
       dispatch(getReposFailed(error));
     });
 };

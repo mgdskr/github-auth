@@ -4,13 +4,9 @@ import { filter } from '../../redux/modules/filters';
 import './style.css';
 
 class Filters extends Component {
-  // handlerOnFilterBy = event => {console.log('!');};
-
   handlerOnFilterBy = event => {
-    console.log('1');
     const t = event.target;
     const $inputId = t.id;
-    // const $inputName = t.name;
     const filterObj = { ...this.props.filterObj };
 
     if ($inputId === 'hasOpenIssues') {
@@ -37,8 +33,6 @@ class Filters extends Component {
 
   render() {
     const { filterObj, languages } = this.props;
-    // const { filterObj } = this.props;
-    // const languages = [];
 
     return (
       <div className="filtersContainer">
