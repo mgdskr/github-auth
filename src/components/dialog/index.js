@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { dialogClose } from '../../redux/modules/dialog';
 import { getLanguagesShares } from '../../libs/utils';
 import drawPieChart from '../../libs/drawPieChart';
@@ -7,16 +8,43 @@ import languageColors from '../../libs/language-colors';
 import './style.css';
 
 class Dialog extends Component {
-  componentDidMount() {
-    console.log('drawchart');
-  }
+  static defaultProps = {
+    dialogItem: {},
+    isDialogOpen: false
+  };
+
+  static propTypes = {
+    dialogItem: PropTypes.shape({
+      fullName: PropTypes.string,
+      htmlUrl: PropTypes.string,
+      sourceUrl: PropTypes.string,
+      sourceName: PropTypes.string,
+      contributors: PropTypes.arrayOf(
+        PropTypes.shape({
+          html_url: PropTypes.string,
+          avatar_url: PropTypes.string,
+          login: PropTypes.string,
+          contributions: PropTypes.string,
+          id: PropTypes.string
+        })
+      ),
+      languages: PropTypes.object,
+      pulls: PropTypes.arrayOf(
+        PropTypes.shape({
+          title: PropTypes.string,
+          html_url: PropTypes.string,
+          id: PropTypes.string
+        })
+      )
+    })
+  };
 
   handlerOnClose = event => {
     if (
       event.target.id === 'dialogContainer' ||
       event.target.id === 'dialogClose'
     ) {
-      dialogClose(this.props.dispatch);
+      this.props.dialogClose();
     }
   };
 
@@ -31,7 +59,7 @@ class Dialog extends Component {
   }
 
   render() {
-    const { dialogItem = {}, isDialogOpen } = this.props;
+    const { dialogItem, isDialogOpen } = this.props;
     const {
       fullName,
       htmlUrl,
@@ -150,4 +178,6 @@ const mapStateToProps = ({ dialog: { data, repoId, isDialogOpen } }) => ({
 });
 
 export { Dialog };
-export default connect(mapStateToProps)(Dialog);
+export default connect(mapStateToProps, dispatch => ({
+  dialogClose: dialogClose(dispatch)
+}))(Dialog);

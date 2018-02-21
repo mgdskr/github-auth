@@ -14,7 +14,6 @@ class Home extends Component {
   };
 
   render() {
-    console.log('props', this.props);
     const { allPagesLoaded } = this.props;
 
     return (

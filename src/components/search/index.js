@@ -1,15 +1,21 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { getRepos } from '../../redux/modules/repos';
 import './style.css';
 
 class Search extends Component {
+  static propTypes = {
+    getRepos: PropTypes.func,
+    handleOnSearch: PropTypes.func
+  };
+
   handleOnSearch = event => {
     event.preventDefault();
     const $input = event.target.querySelector('#searchInput');
     const query = $input.value;
     $input.value = '';
-    getRepos(this.props.dispatch)(query);
+    this.props.getRepos(query);
   };
 
   render() {
@@ -23,4 +29,6 @@ class Search extends Component {
 }
 
 export { Search };
-export default connect()(Search);
+export default connect(null, dispatch => ({ getRepos: getRepos(dispatch) }))(
+  Search
+);

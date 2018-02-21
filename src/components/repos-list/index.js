@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Repo from '../repo';
 import { filterFunction, sortingFunction } from '../../libs/utils';
-import { dialogOpen, dialogGetData } from '../../redux/modules/dialog';
+import { dialogGetData, dialogOpen } from '../../redux/modules/dialog';
 
 class ReposList extends Component {
   static defaultProps = {
@@ -21,12 +21,13 @@ class ReposList extends Component {
   };
 
   handlerOnOpenDialog = repoId => () => {
-    const { cachedData, dispatch, repos } = this.props;
+    const { cachedData, repos, dialogGetData, dialogOpen } = this.props;
+
     if (cachedData.map(({ id }) => id).includes(repoId)) {
-      return dialogOpen(dispatch)(repoId);
+      return dialogOpen(repoId);
     }
-    dialogGetData(dispatch)(repos.find(({ id }) => id === repoId));
-    console.log(repoId);
+
+    dialogGetData(repos.find(({ id }) => id === repoId));
   };
 
   render() {
@@ -63,5 +64,10 @@ const mapStateToProps = ({
   cachedData
 });
 
+const mapDispatchToProps = dispatch => ({
+  dialogGetData: dialogGetData(dispatch),
+  dialogOpen: dialogOpen(dispatch)
+});
+
 export { ReposList };
-export default connect(mapStateToProps)(ReposList);
+export default connect(mapStateToProps, mapDispatchToProps)(ReposList);

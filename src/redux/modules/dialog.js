@@ -44,7 +44,7 @@ const dialogGetDataSuccess = (data, repoId) => ({
 
 const dialogGetDataFailed = error => ({ type: DIALOG_GET_DATA_FAILED, error });
 
-const dialogClose = dispatch => dispatch({ type: DIALOG_CLOSE });
+const dialogClose = dispatch => () => dispatch({ type: DIALOG_CLOSE });
 
 const initialState = {
   isDialogOpen: false,

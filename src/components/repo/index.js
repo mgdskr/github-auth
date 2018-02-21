@@ -1,26 +1,51 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import './style.css';
 import languageColors from '../../libs/language-colors';
 
 class Repo extends Component {
+  static propTypes = {
+    repo: PropTypes.shape({
+      id: PropTypes.string,
+      full_name: PropTypes.string,
+      description: PropTypes.string,
+      fork: PropTypes.string,
+      stargazers_count: PropTypes.numbers,
+      language: PropTypes.string,
+      updated_at: PropTypes.string
+    })
+  };
+
   render() {
-    const { repo, handlerOnOpenDialog } = this.props;
+    const {
+      repo: {
+        id,
+        full_name,
+        description,
+        fork,
+        stargazers_count,
+        language,
+        updated_at
+      },
+      handlerOnOpenDialog
+    } = this.props;
+
     const languageColor = {
       backgroundColor:
-        repo.language && languageColors[repo.language]
-          ? languageColors[repo.language].color
+        language && languageColors[language]
+          ? languageColors[language].color
           : '#586069'
     };
     const stars =
-      repo.stargazers_count < 1000
-        ? repo.stargazers_count
-        : (repo.stargazers_count / 1000).toFixed(1) + 'k';
+      stargazers_count < 1000
+        ? stargazers_count
+        : (stargazers_count / 1000).toFixed(1) + 'k';
 
     return (
-      <div className="repo" onClick={handlerOnOpenDialog(repo.id)}>
-        <h2 className="repoName">{repo.full_name}</h2>
-        <h3 className="repoDescription">{repo.description}</h3>
-        {repo.fork ? <span className="repoForked">Forked</span> : null}
+      <div className="repo" onClick={handlerOnOpenDialog(id)}>
+        <h2 className="repoName">{full_name}</h2>
+        <h3 className="repoDescription">{description}</h3>
+        {fork ? <span className="repoForked">Forked</span> : null}
         {stars ? (
           <span className="repoStars">
             <i className="repoStarsIcon">
@@ -39,13 +64,13 @@ class Repo extends Component {
             {stars}
           </span>
         ) : null}
-        <time className="repoUpdatedAt" dateTime={repo.updated_at}>
-          Updated at: {repo.updated_at.slice(0, 10)}
+        <time className="repoUpdatedAt" dateTime={updated_at}>
+          Updated at: {updated_at.slice(0, 10)}
         </time>
-        {repo.language ? (
+        {language ? (
           <span className="repoLanguage">
             <i className="repoLanguageIcon" style={languageColor} />
-            {repo.language}
+            {language}
           </span>
         ) : null}
       </div>

@@ -1,14 +1,19 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { sort } from '../../redux/modules/sort';
 import { sortingOptions } from './sorting';
 
 class Sorting extends Component {
   static defaultProps = {
-    sortingObj: {
-      sortingField: 'full_name',
-      sortingOrder: 'asc'
-    }
+    sortingField: 'full_name',
+    sortingOrder: 'asc'
+  };
+
+  static propTypes = {
+    sortingField: PropTypes.string,
+    sortingOrder: PropTypes.string,
+    sort: PropTypes.func
   };
 
   handlerOnSort = event => {
@@ -17,11 +22,11 @@ class Sorting extends Component {
       option => option.selected
     ).value;
     const sortingObj = sortingOptions[sortingType];
-    sort(this.props.dispatch)(sortingObj);
+    this.props.sort(sortingObj);
   };
 
   render() {
-    const { sortingObj: { sortingField, sortingOrder } } = this.props;
+    const { sortingField, sortingOrder } = this.props;
 
     return (
       <div className="sortingContainer">
@@ -52,7 +57,12 @@ class Sorting extends Component {
   }
 }
 
-const mapStateToProps = ({ sorting: sortingObj }) => ({ sortingObj });
+const mapStateToProps = ({ sort: { sortingField, sortingOrder } }) => ({
+  sortingField,
+  sortingOrder
+});
 
 export { Sorting };
-export default connect(mapStateToProps)(Sorting);
+export default connect(mapStateToProps, dispatch => ({ sort: sort(dispatch) }))(
+  Sorting
+);

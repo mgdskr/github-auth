@@ -1,32 +1,58 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { filter } from '../../redux/modules/filters';
 import './style.css';
 
 class Filters extends Component {
+  static propTypes = {
+    filterObj: PropTypes.shape({
+      hasOpenIssues: PropTypes.bool,
+      hasTopics: PropTypes.bool,
+      starredGTXTimes: PropTypes.number,
+      updatedAfter: PropTypes.string,
+      type: PropTypes.string,
+      lang: PropTypes.string
+    }),
+    languages: PropTypes.arrayOf(PropTypes.string)
+  };
+
   handlerOnFilterBy = event => {
     const t = event.target;
     const $inputId = t.id;
-    const filterObj = { ...this.props.filterObj };
+    let {
+      hasOpenIssues,
+      hasTopics,
+      starredGTXTimes,
+      updatedAfter,
+      type,
+      lang
+    } = this.props.filterObj;
 
     if ($inputId === 'hasOpenIssues') {
-      filterObj.hasOpenIssues = t.checked;
+      hasOpenIssues = t.checked;
     } else if ($inputId === 'hasTopics') {
-      filterObj.hasTopics = t.checked;
+      hasTopics = t.checked;
     } else if ($inputId === 'starred') {
-      filterObj.starredGTXTimes = t.value;
+      starredGTXTimes = t.value;
     } else if ($inputId === 'updatedAfter') {
-      filterObj.updatedAfter = t.value;
+      updatedAfter = t.value;
     } else if ($inputId === 'type') {
-      filterObj.type = [].find
+      type = [].find
         .call(t.childNodes, option => option.selected)
         .value.toLowerCase();
     } else if ($inputId === 'language') {
-      filterObj.lang = [].find.call(
-        t.childNodes,
-        option => option.selected
-      ).value;
+      lang = [].find.call(t.childNodes, option => option.selected).value;
     }
+
+    const filterObj = {
+      hasOpenIssues,
+      hasTopics,
+      starredGTXTimes,
+      updatedAfter,
+      type,
+      lang
+    };
 
     filter(this.props.dispatch)(filterObj);
   };
