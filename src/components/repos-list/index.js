@@ -23,7 +23,7 @@ const _defaultProps = {
 
 const handlerOnOpenDialog = ({
   cachedData,
-  repos,
+  filteredRepos,
   dialogGetData,
   dialogOpen
 }) => repoId => () => {
@@ -31,7 +31,7 @@ const handlerOnOpenDialog = ({
     return dialogOpen(repoId);
   }
 
-  dialogGetData(repos.find(({ id }) => id === repoId));
+  dialogGetData(filteredRepos.find(({ id }) => id === repoId));
 };
 
 const ReposList = ({ filteredRepos, handlerOnOpenDialog }) => {
