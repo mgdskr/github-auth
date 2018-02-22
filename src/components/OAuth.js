@@ -1,24 +1,30 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { compose, setStatic, lifecycle } from 'recompose';
 import { auth } from '../redux/modules/auth';
 
-class OAuth extends Component {
-  static propTypes = {
-    isAuthorized: PropTypes.bool
-  };
+const propTypes = {
+  isAuthorized: PropTypes.bool
+};
 
-  componentDidMount() {
-    auth(this.props.dispatch);
-  }
-
-  render() {
-    return this.props.isAuthorized ? <Redirect to="/" /> : 'REDIRECTING...';
-  }
+function componentDidMount() {
+  auth(this.props.dispatch);
 }
+
+const OAuth = ({ isAuthorized }) => {
+  return isAuthorized ? <Redirect to="/" /> : 'REDIRECTING...';
+};
+
+const enhance = compose(
+  setStatic('propTypes', propTypes),
+  lifecycle({ componentDidMount })
+);
+
+const enhancedOAuth = enhance(OAuth);
 
 const mapStateToProps = ({ auth: { isAuthorized } }) => ({ isAuthorized });
 
-export { OAuth };
-export default connect(mapStateToProps)(OAuth);
+export { enhancedOAuth };
+export default connect(mapStateToProps)(enhancedOAuth);

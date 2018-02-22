@@ -1,34 +1,40 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { compose, setStatic, withHandlers } from 'recompose';
 import { getRepos } from '../../redux/modules/repos';
 import './style.css';
 
-class Search extends Component {
-  static propTypes = {
-    getRepos: PropTypes.func,
-    handleOnSearch: PropTypes.func
-  };
+const propTypes = {
+  getRepos: PropTypes.func,
+  handleOnSearch: PropTypes.func
+};
 
-  handleOnSearch = event => {
-    event.preventDefault();
-    const $input = event.target.querySelector('#searchInput');
-    const query = $input.value;
-    $input.value = '';
-    this.props.getRepos(query);
-  };
+const handleOnSearch = ({ getRepos }) => event => {
+  event.preventDefault();
+  const $input = event.target.querySelector('#searchInput');
+  const query = $input.value;
+  $input.value = '';
+  getRepos(query);
+};
 
-  render() {
-    return (
-      <form action="" onSubmit={this.handleOnSearch}>
-        <input id="searchInput" type="search" placeholder="Search GitHub" />
-        <button type="submit">Search</button>
-      </form>
-    );
-  }
-}
+const Search = ({ handleOnSearch }) => {
+  return (
+    <form action="" onSubmit={handleOnSearch}>
+      <input id="searchInput" type="search" placeholder="Search GitHub" />
+      <button type="submit">Search</button>
+    </form>
+  );
+};
 
-export { Search };
+const enhance = compose(
+  setStatic('propTypes', propTypes),
+  withHandlers({ handleOnSearch })
+);
+
+const enhancedSearch = enhance(Search);
+
+export { enhancedSearch };
 export default connect(null, dispatch => ({ getRepos: getRepos(dispatch) }))(
-  Search
+  enhancedSearch
 );

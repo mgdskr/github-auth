@@ -1,86 +1,79 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import {
+  compose,
+  defaultProps,
+  lifecycle,
+  setStatic,
+  withHandlers
+} from 'recompose';
 import { dialogClose } from '../../redux/modules/dialog';
 import { getLanguagesShares } from '../../libs/utils';
 import drawPieChart from '../../libs/drawPieChart';
 import languageColors from '../../libs/language-colors';
 import './style.css';
 
-class Dialog extends Component {
-  static defaultProps = {
-    dialogItem: {},
-    isDialogOpen: false
-  };
+const _defaultProps = {
+  dialogItem: {},
+  isDialogOpen: false
+};
 
-  static propTypes = {
-    dialogItem: PropTypes.shape({
-      fullName: PropTypes.string,
-      htmlUrl: PropTypes.string,
-      sourceUrl: PropTypes.string,
-      sourceName: PropTypes.string,
-      contributors: PropTypes.arrayOf(
-        PropTypes.shape({
-          html_url: PropTypes.string,
-          avatar_url: PropTypes.string,
-          login: PropTypes.string,
-          contributions: PropTypes.string,
-          id: PropTypes.string
-        })
-      ),
-      languages: PropTypes.object,
-      pulls: PropTypes.arrayOf(
-        PropTypes.shape({
-          title: PropTypes.string,
-          html_url: PropTypes.string,
-          id: PropTypes.string
-        })
-      )
-    })
-  };
+const propTypes = {
+  dialogItem: PropTypes.shape({
+    fullName: PropTypes.string,
+    htmlUrl: PropTypes.string,
+    sourceUrl: PropTypes.string,
+    sourceName: PropTypes.string,
+    contributors: PropTypes.arrayOf(
+      PropTypes.shape({
+        html_url: PropTypes.string,
+        avatar_url: PropTypes.string,
+        login: PropTypes.string,
+        contributions: PropTypes.number,
+        id: PropTypes.number
+      })
+    ),
+    languages: PropTypes.object,
+    pulls: PropTypes.arrayOf(
+      PropTypes.shape({
+        title: PropTypes.string,
+        html_url: PropTypes.string,
+        id: PropTypes.string
+      })
+    )
+  })
+};
 
-  handlerOnClose = event => {
-    if (
-      event.target.id === 'dialogContainer' ||
-      event.target.id === 'dialogClose'
-    ) {
-      this.props.dialogClose();
-    }
-  };
-
-  componentDidUpdate() {
-    if (!this.props.isDialogOpen) return;
-    console.log('returned', document.querySelector('#pieChart'));
-
-    drawPieChart(
-      document.querySelector('#pieChart'),
-      getLanguagesShares(this.props.dialogItem.languages)
-    );
+const handlerOnClose = ({ dialogClose }) => event => {
+  if (
+    event.target.id === 'dialogContainer' ||
+    event.target.id === 'dialogClose'
+  ) {
+    console.log('handler on close');
+    dialogClose();
   }
+};
 
-  render() {
-    const { dialogItem, isDialogOpen } = this.props;
-    const {
-      fullName,
-      htmlUrl,
-      sourceUrl,
-      sourceName,
-      contributors,
-      languages,
-      pulls
-    } = dialogItem;
+const Dialog = ({ dialogItem, isDialogOpen, handlerOnClose }) => {
+  const {
+    fullName,
+    htmlUrl,
+    sourceUrl,
+    sourceName,
+    contributors,
+    languages,
+    pulls
+  } = dialogItem;
 
-    if (!isDialogOpen) return null;
+  const languagesInPercent = languages && (getLanguagesShares(languages) || {});
 
-    console.log('rendered', dialogItem);
-
-    const languagesInPercent = getLanguagesShares(languages) || {};
-
-    return (
+  return (
+    isDialogOpen && (
       <div
         id="dialogContainer"
         className="dialogContainer"
-        onClick={this.handlerOnClose}
+        onClick={handlerOnClose}
       >
         <div id="dialog" className="dialog">
           <span id="dialogClose" className="dialogClose">
@@ -151,7 +144,7 @@ class Dialog extends Component {
               </div>
             )}
 
-            {pulls.length ? (
+            {pulls.length && (
               <div className="pullsContainer">
                 <h4>Pull requests</h4>
                 <ul className="pullsList">
@@ -164,20 +157,41 @@ class Dialog extends Component {
                   ))}
                 </ul>
               </div>
-            ) : null}
+            )}
           </div>
         </div>
       </div>
-    );
-  }
+    )
+  );
+};
+
+function componentDidUpdate() {
+  if (!this.props.isDialogOpen) return;
+  console.log('returned', document.querySelector('#pieChart'));
+
+  drawPieChart(
+    document.querySelector('#pieChart'),
+    getLanguagesShares(this.props.dialogItem.languages)
+  );
 }
+
+const enhance = compose(
+  setStatic('propTypes', propTypes),
+  defaultProps(_defaultProps),
+  withHandlers({ handlerOnClose }),
+  lifecycle({
+    componentDidUpdate
+  })
+);
+
+const enhancedDialog = enhance(Dialog);
 
 const mapStateToProps = ({ dialog: { data, repoId, isDialogOpen } }) => ({
   dialogItem: data.find(({ id }) => id === repoId),
   isDialogOpen
 });
 
-export { Dialog };
+export { enhancedDialog };
 export default connect(mapStateToProps, dispatch => ({
   dialogClose: dialogClose(dispatch)
-}))(Dialog);
+}))(enhancedDialog);
