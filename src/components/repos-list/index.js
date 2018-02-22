@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { compose, defaultProps, withHandlers } from 'recompose';
+import { createSelector } from 'reselect';
 import Repo from '../repo';
 import { filterFunction, sortingFunction } from '../../libs/utils';
 import { dialogGetData, dialogOpen } from '../../redux/modules/dialog';
@@ -33,14 +34,10 @@ const handlerOnOpenDialog = ({
   dialogGetData(repos.find(({ id }) => id === repoId));
 };
 
-const ReposList = ({ repos, filters, sortingObj, handlerOnOpenDialog }) => {
-  const filteredRepos = repos
-    .filter(filterFunction(filters))
-    .sort(sortingFunction(sortingObj));
-
+const ReposList = ({ filteredRepos, handlerOnOpenDialog }) => {
   return (
     <div>
-      {repos.length
+      {filteredRepos.length
         ? filteredRepos.map(repo => (
             <Repo
               repo={repo}
@@ -60,17 +57,24 @@ const enhance = compose(
 
 const enhancedReposList = enhance(ReposList);
 
-const mapStateToProps = ({
-  repos: { repos },
-  filters,
-  sort: sortingObj,
-  dialog: { data: cachedData }
-}) => ({
+const repos = ({ repos: { repos } }) => repos;
+const filters = ({ filters }) => filters;
+const sortingObj = ({ sort }) => sort;
+const cachedData = ({ dialog: { data } }) => data;
+
+const selector = createSelector(
   repos,
   filters,
   sortingObj,
-  cachedData
-});
+  cachedData,
+  (repos, filters, sortingObj, cachedData) => {
+    const filteredRepos = repos
+      .filter(filterFunction(filters))
+      .sort(sortingFunction(sortingObj));
+
+    return { filteredRepos, cachedData };
+  }
+);
 
 const mapDispatchToProps = dispatch => ({
   dialogGetData: dialogGetData(dispatch),
@@ -78,4 +82,4 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export { enhancedReposList };
-export default connect(mapStateToProps, mapDispatchToProps)(enhancedReposList);
+export default connect(selector, mapDispatchToProps)(enhancedReposList);
