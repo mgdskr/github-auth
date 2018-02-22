@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { createSelector } from 'reselect';
 import { compose, setStatic, withHandlers } from 'recompose';
 import { filter } from '../../redux/modules/filters';
 import './style.css';
@@ -148,10 +149,14 @@ const enhance = compose(
 
 const enhancedFilters = enhance(Filters);
 
-const mapStateToProps = ({ filters: filterObj, repos: { languages } }) => ({
+const filterObj = ({ filters: filterObj }) => filterObj;
+const languages = ({ repos: { languages } }) => languages;
+
+const selector = createSelector(
   filterObj,
-  languages
-});
+  languages,
+  (filterObj, languages) => ({ filterObj, languages })
+);
 
 export { enhancedFilters };
-export default connect(mapStateToProps)(enhancedFilters);
+export default connect(selector)(enhancedFilters);

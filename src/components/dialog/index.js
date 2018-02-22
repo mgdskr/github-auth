@@ -39,7 +39,7 @@ const propTypes = {
       PropTypes.shape({
         title: PropTypes.string,
         html_url: PropTypes.string,
-        id: PropTypes.string
+        id: PropTypes.number
       })
     )
   })
@@ -50,7 +50,6 @@ const handlerOnClose = ({ dialogClose }) => event => {
     event.target.id === 'dialogContainer' ||
     event.target.id === 'dialogClose'
   ) {
-    console.log('handler on close');
     dialogClose();
   }
 };
