@@ -5,21 +5,25 @@ import {
   compose,
   renderNothing,
   setStatic,
+  setDisplayName,
   withProps
 } from 'recompose';
 import './style.css';
 import languageColors from '../../libs/language-colors';
 
 const propTypes = {
-  repo: PropTypes.shape({
-    id: PropTypes.number,
-    full_name: PropTypes.string,
-    description: PropTypes.string,
-    fork: PropTypes.boolean,
-    stargazers_count: PropTypes.number,
-    language: PropTypes.string,
-    updated_at: PropTypes.string
-  })
+  id: PropTypes.number,
+  full_name: PropTypes.string,
+  description: PropTypes.string,
+  fork: PropTypes.bool,
+  stargazers_count: PropTypes.number,
+  language: PropTypes.string,
+  updated_at: PropTypes.string,
+  stars: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  languageColor: PropTypes.shape({
+    backgroundColor: PropTypes.string
+  }),
+  handlerOnOpenDialog: PropTypes.func
 };
 
 const hideIfNoData = hasNoData => branch(hasNoData, renderNothing);
@@ -99,6 +103,7 @@ const addNewProps = ownerProps => {
 };
 
 export default compose(
+  setDisplayName('Repo'),
   setStatic('propTypes', propTypes),
   withProps(addNewProps)
 )(Repo);
