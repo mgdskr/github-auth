@@ -14,12 +14,17 @@ class App extends Component {
         <Fragment>
           <RouteWithPath path="/login" component={Login} />
           <RouteWithPath path="/oauth" component={OAuth} />
+          <RouteWithPath exact path="/test" component={TestExact} />
+          <RouteWithPath path="/path" component={TestNOTExact} />
           <PrivateRoute exact path="/" component={Home} />
         </Fragment>
       </Router>
     );
   }
 }
+
+const TestExact = () => <h1>Exact Path</h1>;
+const TestNOTExact = () => <h1>NOT Exact Path</h1>;
 
 const RouteWithPath = ({ component: Component, path, ...rest }) => (
   <Route

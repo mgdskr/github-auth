@@ -1,138 +1,162 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { createSelector } from 'reselect';
+import { compose, setStatic, withHandlers } from 'recompose';
 import { filter } from '../../redux/modules/filters';
 import './style.css';
 
-class Filters extends Component {
-  // handlerOnFilterBy = event => {console.log('!');};
+const propTypes = {
+  filterObj: PropTypes.shape({
+    hasOpenIssues: PropTypes.bool,
+    hasTopics: PropTypes.bool,
+    starredGTXTimes: PropTypes.number,
+    updatedAfter: PropTypes.string,
+    type: PropTypes.string,
+    lang: PropTypes.string
+  }),
+  languages: PropTypes.arrayOf(PropTypes.string)
+};
 
-  handlerOnFilterBy = event => {
-    console.log('1');
-    const t = event.target;
-    const $inputId = t.id;
-    // const $inputName = t.name;
-    const filterObj = { ...this.props.filterObj };
+const handlerOnFilterBy = ({ filterObj, dispatch }) => event => {
+  const t = event.target;
+  const $inputId = t.id;
+  let {
+    hasOpenIssues,
+    hasTopics,
+    starredGTXTimes,
+    updatedAfter,
+    type,
+    lang
+  } = filterObj;
 
-    if ($inputId === 'hasOpenIssues') {
-      filterObj.hasOpenIssues = t.checked;
-    } else if ($inputId === 'hasTopics') {
-      filterObj.hasTopics = t.checked;
-    } else if ($inputId === 'starred') {
-      filterObj.starredGTXTimes = t.value;
-    } else if ($inputId === 'updatedAfter') {
-      filterObj.updatedAfter = t.value;
-    } else if ($inputId === 'type') {
-      filterObj.type = [].find
-        .call(t.childNodes, option => option.selected)
-        .value.toLowerCase();
-    } else if ($inputId === 'language') {
-      filterObj.lang = [].find.call(
-        t.childNodes,
-        option => option.selected
-      ).value;
-    }
+  if ($inputId === 'hasOpenIssues') {
+    hasOpenIssues = t.checked;
+  } else if ($inputId === 'hasTopics') {
+    hasTopics = t.checked;
+  } else if ($inputId === 'starred') {
+    starredGTXTimes = t.value;
+  } else if ($inputId === 'updatedAfter') {
+    updatedAfter = t.value;
+  } else if ($inputId === 'type') {
+    type = [].find
+      .call(t.childNodes, option => option.selected)
+      .value.toLowerCase();
+  } else if ($inputId === 'language') {
+    lang = [].find.call(t.childNodes, option => option.selected).value;
+  }
 
-    filter(this.props.dispatch)(filterObj);
+  const newFilterObj = {
+    hasOpenIssues,
+    hasTopics,
+    starredGTXTimes,
+    updatedAfter,
+    type,
+    lang
   };
 
-  render() {
-    const { filterObj, languages } = this.props;
-    // const { filterObj } = this.props;
-    // const languages = [];
+  filter(dispatch)(newFilterObj);
+};
 
-    return (
-      <div className="filtersContainer">
-        <div className="filter">
-          <input
-            id="hasOpenIssues"
-            type="checkbox"
-            checked={filterObj.hasOpenIssues}
-            onChange={this.handlerOnFilterBy}
-          />
-          <label className="checkbox" htmlFor="hasOpenIssues">
-            Open issues
-          </label>
-        </div>
-
-        <div className="filter">
-          <input
-            id="hasTopics"
-            type="checkbox"
-            checked={filterObj.hasTopics}
-            onChange={this.handlerOnFilterBy}
-          />
-          <label className="checkbox" htmlFor="hasTopics">
-            Topics
-          </label>
-        </div>
-
-        <div className="filter">
-          <label htmlFor="starred">Stars</label>
-          <input
-            id="starred"
-            type="number"
-            value={filterObj.starredGTXTimes}
-            onInput={this.handlerOnFilterBy}
-          />
-        </div>
-
-        <div className="filter">
-          <label htmlFor="updatedAfter">Updated</label>
-          <input
-            id="updatedAfter"
-            type="date"
-            value={filterObj.updatedAfter}
-            onChange={this.handlerOnFilterBy}
-          />
-        </div>
-        <div className="filterSelect">
-          <label htmlFor="type">Type</label>
-          <select
-            id="type"
-            name="type"
-            size="1"
-            onChange={this.handlerOnFilterBy}
-          >
-            {['All', 'Fork', 'Source'].map(type => (
-              <option
-                key={type}
-                value={type}
-                defaultValue={type.toLowerCase() === filterObj.type}
-              >
-                {type}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="filterSelect">
-          <label htmlFor="language">Language</label>
-          <select
-            name="language"
-            id="language"
-            size="1"
-            onChange={this.handlerOnFilterBy}
-          >
-            {languages.map(language => (
-              <option
-                key={language}
-                value={language}
-                defaultValue={language === filterObj.lang}
-              >
-                {language}
-              </option>
-            ))}
-          </select>
-        </div>
+const Filters = ({ filterObj, languages, handlerOnFilterBy }) => {
+  return (
+    <div className="filtersContainer">
+      <div className="filter">
+        <input
+          id="hasOpenIssues"
+          type="checkbox"
+          checked={filterObj.hasOpenIssues}
+          onChange={handlerOnFilterBy}
+        />
+        <label className="checkbox" htmlFor="hasOpenIssues">
+          Open issues
+        </label>
       </div>
-    );
-  }
-}
 
-const mapStateToProps = ({ filters, repos }) => ({
-  filterObj: filters,
-  languages: repos.languages
-});
+      <div className="filter">
+        <input
+          id="hasTopics"
+          type="checkbox"
+          checked={filterObj.hasTopics}
+          onChange={handlerOnFilterBy}
+        />
+        <label className="checkbox" htmlFor="hasTopics">
+          Topics
+        </label>
+      </div>
 
-export { Filters };
-export default connect(mapStateToProps)(Filters);
+      <div className="filter">
+        <label htmlFor="starred">Stars</label>
+        <input
+          id="starred"
+          type="number"
+          value={filterObj.starredGTXTimes}
+          onInput={handlerOnFilterBy}
+        />
+      </div>
+
+      <div className="filter">
+        <label htmlFor="updatedAfter">Updated</label>
+        <input
+          id="updatedAfter"
+          type="date"
+          value={filterObj.updatedAfter}
+          onChange={handlerOnFilterBy}
+        />
+      </div>
+      <div className="filterSelect">
+        <label htmlFor="type">Type</label>
+        <select id="type" name="type" size="1" onChange={handlerOnFilterBy}>
+          {['All', 'Fork', 'Source'].map(type => (
+            <option
+              key={type}
+              value={type}
+              defaultValue={type.toLowerCase() === filterObj.type}
+            >
+              {type}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="filterSelect">
+        <label htmlFor="language">Language</label>
+        <select
+          name="language"
+          id="language"
+          size="1"
+          onChange={handlerOnFilterBy}
+        >
+          {languages.map(language => (
+            <option
+              key={language}
+              value={language}
+              defaultValue={language === filterObj.lang}
+            >
+              {language}
+            </option>
+          ))}
+        </select>
+      </div>
+    </div>
+  );
+};
+
+const enhance = compose(
+  setStatic('propTypes', propTypes),
+  withHandlers({ handlerOnFilterBy })
+);
+
+const enhancedFilters = enhance(Filters);
+
+const filterObj = ({ filters: filterObj }) => filterObj;
+const languages = ({ repos: { languages } }) => languages;
+
+const selector = createSelector(
+  filterObj,
+  languages,
+  (filterObj, languages) => ({ filterObj, languages })
+);
+
+export { enhancedFilters };
+export default connect(selector)(enhancedFilters);

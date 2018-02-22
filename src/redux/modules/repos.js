@@ -11,8 +11,8 @@ const getRepos = dispatch => query => {
   });
 
   API.searchRepos(query)
-    .then(({ items }) => {
-      dispatch(getReposSuccess({ repos: items }));
+    .then(({ items, total_count }) => {
+      dispatch(getReposSuccess(items, total_count));
     })
     .catch(error => {
       console.log(error);
@@ -20,9 +20,10 @@ const getRepos = dispatch => query => {
     });
 };
 
-const getReposSuccess = data => ({
+const getReposSuccess = (repos, totalCount) => ({
   type: GET_REPOS_SUCCESS,
-  data
+  repos,
+  totalCount
 });
 
 const getReposFailed = error => ({
@@ -30,15 +31,28 @@ const getReposFailed = error => ({
   error
 });
 
-const initialData = { repos: [] };
+const loadMore = dispatch => (query, nextPage) => {
+  API.loadPage(query, nextPage)
+    .then(({ items: repos, total_count: totalCount }) => {
+      dispatch(getReposSuccess(repos, totalCount));
+    })
+    .catch(error => {
+      dispatch(getReposFailed(error));
+    });
+};
 
-export default function reducer(
-  state = {
-    data: initialData,
-    languages: ['Any']
-  },
-  action
-) {
+const initialState = {
+  query: '',
+  isDataFetching: false,
+  isDataFetched: false,
+  error: null,
+  repos: [],
+  languages: ['Any'],
+  totalCount: 0,
+  nextPage: 1
+};
+
+export default function reducer(state = initialState, action) {
   switch (action.type) {
     case GET_REPOS:
       return {
@@ -49,30 +63,31 @@ export default function reducer(
         error: null
       };
     case GET_REPOS_SUCCESS: {
-      const reposLanguages = action.data.repos.reduce((acc, item) => {
+      const reposLanguages = action.repos.reduce((acc, item) => {
         if (item.language === null || acc.includes(item.language)) {
           return acc;
         }
         return acc.concat(item.language);
       }, []);
       const languages = ['Any', ...Array.from(new Set(reposLanguages))];
+      const nextPage = state.nextPage + 1;
+      const allPagesLoaded = action.totalCount - nextPage * 30 < 0;
 
       return {
         ...state,
         isDataFetching: false,
         isDataFetched: true,
-        data: action.data,
+        repos: [...state.repos, ...action.repos],
+        totalCount: action.totalCount,
         languages,
+        nextPage,
+        allPagesLoaded,
         error: null
       };
     }
     case GET_REPOS_FAILED:
       return {
-        ...state,
-        isDataFetching: false,
-        isDataFetched: false,
-        data: initialData,
-        languages: ['Any'],
+        ...initialState,
         error: action.error
       };
     default:
@@ -80,4 +95,4 @@ export default function reducer(
   }
 }
 
-export { getRepos, getReposSuccess, getReposFailed };
+export { getRepos, getReposSuccess, getReposFailed, loadMore };

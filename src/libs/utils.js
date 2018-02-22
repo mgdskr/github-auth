@@ -38,4 +38,29 @@ const sortingFunction = ({ sortingField, sortingOrder = 'asc' }) => (a, b) => {
     : sortingAlg(b[sortingField], a[sortingField]);
 };
 
-export { filterFunction, sortingFunction };
+const getLanguagesShares = languages => {
+  const languagesTotalSum = Object.keys(languages).reduce(
+    (acc, lang) => (acc += languages[lang]),
+    0
+  );
+  const otherLanguagesSum = Object.keys(languages).reduce(
+    (acc, lang) => (acc += languages[lang] < 1024 ? languages[lang] : 0),
+    0
+  );
+  const languagesInPercent = {};
+  Object.keys(languages).forEach(lang => {
+    if (languages[lang] >= 1024) {
+      const languageShare = languages[lang] / languagesTotalSum * 100;
+      if (languageShare > 0) {
+        languagesInPercent[lang] = languageShare;
+      }
+    }
+  });
+
+  if (otherLanguagesSum > 0) {
+    languagesInPercent.Others = otherLanguagesSum / languagesTotalSum * 100;
+  }
+  return languagesInPercent;
+};
+
+export { filterFunction, sortingFunction, getLanguagesShares };

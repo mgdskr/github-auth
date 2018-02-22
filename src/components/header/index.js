@@ -1,19 +1,21 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { compose, setStatic } from 'recompose';
+import PropTypes from 'prop-types';
 import InnerContainer from '../inner-container';
 import Search from '../search';
 import './style.css';
 
-class Header extends Component {
-  render() {
-    return (
-      <header>
-        <InnerContainer>
-          <h1>Mini github client</h1>
-          <Search onSearch={this.props.onSearch} />
-        </InnerContainer>
-      </header>
-    );
-  }
-}
+const propTypes = {
+  onSearch: PropTypes.func
+};
 
-export default Header;
+const Header = ({ onSearch }) => (
+  <header>
+    <InnerContainer>
+      <h1>Mini github client</h1>
+      <Search onSearch={onSearch} />
+    </InnerContainer>
+  </header>
+);
+
+export default compose(setStatic('propTypes', propTypes))(Header);

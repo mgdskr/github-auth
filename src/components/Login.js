@@ -1,24 +1,18 @@
-import React, { Component, Fragment } from 'react';
+import React, { Fragment } from 'react';
+import { compose, withHandlers } from 'recompose';
 import API from '../services/github-api';
 
-class Login extends Component {
-  constructor() {
-    super();
-    this.login = this.login.bind(this);
-  }
+const login = () => () => {
+  API.login();
+};
 
-  login() {
-    API.login();
-  }
+const Login = ({ login }) => {
+  return (
+    <Fragment>
+      You are not logged!
+      <button onClick={login}>Log me in!</button>
+    </Fragment>
+  );
+};
 
-  render() {
-    return (
-      <Fragment>
-        You are not logged!
-        <button onClick={this.login}>Log me in!</button>
-      </Fragment>
-    );
-  }
-}
-
-export default Login;
+export default compose(withHandlers({ login }))(Login);
