@@ -83,7 +83,6 @@ const Repo = ({
 
 const addNewProps = ownerProps => {
   const { repo } = ownerProps;
-  console.log(repo);
   const { stargazers_count, language } = repo;
   const stars =
     stargazers_count < 1000
