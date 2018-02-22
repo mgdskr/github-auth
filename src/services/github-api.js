@@ -5,6 +5,15 @@ const HOST_API = 'https://api.github.com';
 let token = window.localStorage.ACCESS_TOKEN || '';
 
 const API = {
+  fetchWithToken(url) {
+    if (!token) return Promise.resolve([]);
+    const headers = new Headers();
+    headers.set('Accept', 'application/vnd.github.mercy-preview+json');
+
+    return fetch(`${url}&access_token=${token}`, { headers }).then(response =>
+      response.json()
+    );
+  },
   login() {
     window.location.replace(
       `${LOGIN_API}/login/oauth/authorize/?client_id=${CLIENT_ID}`
@@ -20,14 +29,19 @@ const API = {
       });
   },
   searchRepos(query) {
-    if (!token) return Promise.resolve([]);
-
-    return fetch(
-      `${HOST_API}/search/repositories?q=${query}&access_token=${token}`
-    ).then(response => response.json());
+    return this.fetchWithToken(`${HOST_API}/search/repositories?q=${query}`);
   },
   hasToken() {
     return !!token;
+  },
+  loadPage(query, page) {
+    return this.fetchWithToken(
+      `${HOST_API}/search/repositories?q=${query}&page=${page}`
+    );
+  },
+  getDialogData(URLs) {
+    const promises = URLs.map(URL => this.fetchWithToken(`${URL}?`));
+    return Promise.all(promises);
   }
 };
 

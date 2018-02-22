@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import './style';
+import { connect } from 'react-redux';
+import { filter } from '../../redux/modules/filters';
+import './style.css';
 
 class Filters extends Component {
   handlerOnFilterBy = event => {
     const t = event.target;
     const $inputId = t.id;
-    const $inputName = t.name;
     const filterObj = { ...this.props.filterObj };
 
     if ($inputId === 'hasOpenIssues') {
@@ -27,7 +28,7 @@ class Filters extends Component {
       ).value;
     }
 
-    this.props.handlerOnFilter(filterObj);
+    filter(this.props.dispatch)(filterObj);
   };
 
   render() {
@@ -88,8 +89,9 @@ class Filters extends Component {
           >
             {['All', 'Fork', 'Source'].map(type => (
               <option
+                key={type}
                 value={type}
-                selected={type.toLowerCase() === filterObj.type}
+                defaultValue={type.toLowerCase() === filterObj.type}
               >
                 {type}
               </option>
@@ -106,7 +108,11 @@ class Filters extends Component {
             onChange={this.handlerOnFilterBy}
           >
             {languages.map(language => (
-              <option value={language} selected={language === filterObj.lang}>
+              <option
+                key={language}
+                value={language}
+                defaultValue={language === filterObj.lang}
+              >
                 {language}
               </option>
             ))}
@@ -117,4 +123,10 @@ class Filters extends Component {
   }
 }
 
-export default Filters;
+const mapStateToProps = ({ filters: filterObj, repos: { languages } }) => ({
+  filterObj,
+  languages
+});
+
+export { Filters };
+export default connect(mapStateToProps)(Filters);

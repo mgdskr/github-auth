@@ -1,39 +1,46 @@
 import React, { Component, Fragment } from 'react';
-import API from '../services/github-api';
 import Header from './header';
 import ReposList from './repos-list';
 import InnerContainer from './inner-container';
+import Filters from './filters';
+import Sorting from './sorting';
+import Dialog from './dialog';
+import { connect } from 'react-redux';
+import { loadMore as loadNextPage } from '../redux/modules/repos';
 
 class Home extends Component {
-  constructor() {
-    super();
-    this.state = {
-      access_token: null,
-      repos: []
-    };
-  }
-
-  handleOnSearch = query => {
-    API.searchRepos(query).then(({ items }) => {
-      console.log(items);
-      this.setState({ repos: items });
-    });
+  loadMore = () => {
+    loadNextPage(this.props.dispatch)(this.props.query, this.props.nextPage);
   };
 
   render() {
+    console.log('props', this.props);
+    const { allPagesLoaded } = this.props;
+
     return (
       <Fragment>
-        <Header onSearch={this.handleOnSearch} />
+        <Header />
         <InnerContainer>
-          {this.state.repos.length ? (
-            <ReposList repos={this.state.repos} />
-          ) : (
-            'No repos yet!!!'
-          )}
+          <Sorting />
+          <Filters />
+          <ReposList />
+          {!allPagesLoaded ? (
+            <button type="button" onClick={this.loadMore}>
+              Load more
+            </button>
+          ) : null}
         </InnerContainer>
+        <Dialog />
       </Fragment>
     );
   }
 }
 
-export default Home;
+const mapStateToProps = ({ repos: { nextPage, allPagesLoaded, query } }) => ({
+  nextPage,
+  allPagesLoaded,
+  query
+});
+
+export { Home };
+export default connect(mapStateToProps)(Home);
