@@ -4,16 +4,16 @@
   "private": true,
   "homepage": "https://mgdskr.github.io/github-auth/",
   "dependencies": {
-    "axios": "^0.17.1",
-    "prop-types": "^15.6.0",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
-    "react-redux": "^5.0.6",
+    "axios": "^0.18.0",
+    "prop-types": "^15.6.1",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-redux": "^5.0.7",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
-    "react-scripts": "1.0.17",
-    "recompose": "^0.26.0",
-    "redux": "^3.7.2",
+    "react-scripts": "1.1.4",
+    "recompose": "^0.27.0",
+    "redux": "^4.0.0",
     "redux-thunk": "^2.2.0",
     "reselect": "^3.0.1"
   },
@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "husky": "^0.14.3",
-    "lint-staged": "^6.0.0",
-    "prettier": "^1.9.2"
+    "lint-staged": "^7.1.1",
+    "prettier": "^1.12.1"
   }
 }
